@@ -2,12 +2,17 @@ import odrive
 import time
 from odrive.enums import *
 
-
+#soft minimums
 ax0_min_lim = 0
 ax1_min_lim = 0
 
+# soft maximums
 ax0_max_lim = 275000
 ax1_max_lim = 425000
+
+# centered position
+ax0_centered = 90000
+ax1_centered = 205000
 
 # find the first odrive
 drive_1 = odrive.find_any()
@@ -19,13 +24,19 @@ while drive_1.axis0.current_state != AXIS_STATE_IDLE:
 	time.sleep(0.1)
 
 drive_1.axis1.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
-print("now calibrating axis1")
+print("\nnow calibrating axis1")
 while drive_1.axis1.current_state != AXIS_STATE_IDLE:
 	time.sleep(0.1)
 
 # enter closed-loop control for both motors
+print("\nentering closed-loop control")
 drive_1.axis0.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
 drive_1.axis1.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
+
+# move off of home to center
+print("\nmoving to center")
+drive_1.axis0.controller.pos_setpoint = ax0_centered
+drive_1.axis1.controller.pos_setpoint = ax1_centered
 
 def position():
 	ax0_pos = int(input("Enter position for axis 0: "))
@@ -43,7 +54,7 @@ def position():
 		position()
 
 	drive_1.axis0.controller.pos_setpoint = ax0_pos
-	print("moving to: {}".format(ax0_pos))
+	print("\nmoving to: {}".format(ax0_pos))
 
 	drive_1.axis1.controller.pos_setpoint = ax1_pos
 	print("moving to: {}".format(ax1_pos))
@@ -51,13 +62,13 @@ def position():
 	ax0_current_pos = drive_1.axis0.controller.pos_setpoint 
 	ax1_current_pos = drive_1.axis1.controller.pos_setpoint 
 
-	print("axis0 position: {} \naxis1 position: {}".format(ax0_current_pos, ax1_current_pos))
-	new_pos = input("new position?")
+	print("\naxis0 position: {} \naxis1 position: {}".format(ax0_current_pos, ax1_current_pos))
+	new_pos = input("\nnew position?")
 
 	if new_pos.lower() == "y":
 		position()	
 	else:
-		print("returning home")
+		print("\nreturning home")
 		drive_1.axis0.controller.pos_setpoint = 0
 		drive_1.axis1.controller.pos_setpoint = 0
 		exit()
