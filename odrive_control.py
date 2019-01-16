@@ -27,7 +27,7 @@ while drive_1.axis0.current_state != AXIS_STATE_IDLE:
 drive_1.axis1.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
 print("now calibrating axis1")
 while drive_1.axis1.current_state != AXIS_STATE_IDLE:
-	time.sleep(1.0)
+	time.sleep(3.0)
 
 # enter closed-loop control for both motors
 print("\nentering closed-loop control")
@@ -38,7 +38,7 @@ drive_1.axis1.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
 print("\nmoving to center")
 drive_1.axis0.controller.pos_setpoint = ax0_centered
 drive_1.axis1.controller.pos_setpoint = ax1_centered
-print("axis 0 centered at: {} \naxis1 centered at: {}".format(ax0_centered, ax1_centered))
+print("axis 0 centered at: {} \naxis 1 centered at: {}".format(ax0_centered, ax1_centered))
 time.sleep(3.0)
 
 def position():
