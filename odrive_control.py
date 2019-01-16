@@ -37,6 +37,8 @@ drive_1.axis1.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
 print("\nmoving to center")
 drive_1.axis0.controller.pos_setpoint = ax0_centered
 drive_1.axis1.controller.pos_setpoint = ax1_centered
+print("axis 0 centered at: {} \naxis1 centered at: {}".format(ax0_centered, ax1_centered))
+time.sleep(2.0)
 
 def position():
 	ax0_pos = int(input("Enter position for axis 0: "))
