@@ -20,12 +20,12 @@ drive_1 = odrive.find_any()
 
 # calibrate the motors
 drive_1.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
-print("\nnow calibrating axis0")
+print("\nnow calibrating axis 0")
 while drive_1.axis0.current_state != AXIS_STATE_IDLE:
 	time.sleep(0.1)
 
 drive_1.axis1.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
-print("now calibrating axis1")
+print("now calibrating axis 1")
 while drive_1.axis1.current_state != AXIS_STATE_IDLE:
 	time.sleep(3.0)
 
@@ -41,21 +41,59 @@ drive_1.axis1.controller.pos_setpoint = ax1_centered
 print("axis 0 centered at: {} \naxis 1 centered at: {}".format(ax0_centered, ax1_centered))
 time.sleep(3.0)
 
+# options to operate the arm
+def options():
+	print("\nselect command:")
+	sel = input("(a) position control \n(b) center \n(c) home \n(d) exit \nCOMMAND: ")
+	if sel.lower() == 'a':
+		position()
+	elif sel.lower() == 'b':
+		movement(ax0_centered, ax1_centered)
+	elif sel.lower() == 'c':
+		movement(ax0_min_lim, ax1_min_lim)
+	else:
+		exit_control()
+
+# set position manually
 def position():
 	ax0_pos = int(input("\nEnter position for axis 0: "))
 
 	if ax0_pos > ax0_max_lim or ax0_pos < ax0_min_lim:
-		print("ax0 out of range!")
+		print("axis 0 out of range!")
 		ax0_pos = 0
 		position()
 
 	ax1_pos = int(input("Enter position for axis 1: "))
 
 	if ax1_pos > ax1_max_lim or ax1_pos < ax0_min_lim:
-		print("ax1 out of range!")
+		print("axis 1 out of range!")
 		ax1_pos = 0
 		position()
 
+	movement(ax0_pos, ax1_pos)
+
+	drive_1.axis0.controller.pos_setpoint = ax0_pos
+	print("\nmoving to: {}".format(ax0_pos))
+
+	drive_1.axis1.controller.pos_setpoint = ax1_pos
+	print("moving to: {}".format(ax1_pos))
+
+	# ax0_current_pos = drive_1.axis0.controller.pos_setpoint 
+	# ax1_current_pos = drive_1.axis1.controller.pos_setpoint 
+
+	# print("\naxis 0 position: {} \naxis 1 position: {}".format(ax0_current_pos, ax1_current_pos))
+	# new_pos = input("\nnew position?")
+
+	# if new_pos.lower() == "y":
+	# 	position()	
+	# else:
+	# 	print("\nreturning home")
+	# 	drive_1.axis0.controller.pos_setpoint = 0
+	# 	drive_1.axis1.controller.pos_setpoint = 0
+	# 	exit()
+
+# move the actual arm
+def movement(ax0_pos, ax1_pos):
 	drive_1.axis0.controller.pos_setpoint = ax0_pos
 	print("\nmoving to: {}".format(ax0_pos))
 
@@ -65,15 +103,14 @@ def position():
 	ax0_current_pos = drive_1.axis0.controller.pos_setpoint 
 	ax1_current_pos = drive_1.axis1.controller.pos_setpoint 
 
-	print("\naxis0 position: {} \naxis1 position: {}".format(ax0_current_pos, ax1_current_pos))
-	new_pos = input("\nnew position?")
+	print("\naxis 0 position: {} \naxis 1 position: {}".format(ax0_current_pos, ax1_current_pos))
 
-	if new_pos.lower() == "y":
-		position()	
-	else:
-		print("\nreturning home")
-		drive_1.axis0.controller.pos_setpoint = 0
-		drive_1.axis1.controller.pos_setpoint = 0
-		exit()
+	options()
 
-position()
+def exit_control():
+	print("\nreturning home")
+	drive_1.axis0.controller.pos_setpoint = 0
+	drive_1.axis1.controller.pos_setpoint = 0
+	exit()
+
+options()
