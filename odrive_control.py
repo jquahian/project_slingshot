@@ -14,19 +14,20 @@ ax1_max_lim = 425000
 ax0_centered = 90000
 ax1_centered = 205000
 
+print('\n\nbeginning calibration...')
 # find the first odrive
 drive_1 = odrive.find_any()
 
 # calibrate the motors
 drive_1.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
-print("now calibrating axis0")
+print("\nnow calibrating axis0")
 while drive_1.axis0.current_state != AXIS_STATE_IDLE:
 	time.sleep(0.1)
 
 drive_1.axis1.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
-print("\nnow calibrating axis1")
+print("now calibrating axis1")
 while drive_1.axis1.current_state != AXIS_STATE_IDLE:
-	time.sleep(0.1)
+	time.sleep(1.0)
 
 # enter closed-loop control for both motors
 print("\nentering closed-loop control")
@@ -38,10 +39,10 @@ print("\nmoving to center")
 drive_1.axis0.controller.pos_setpoint = ax0_centered
 drive_1.axis1.controller.pos_setpoint = ax1_centered
 print("axis 0 centered at: {} \naxis1 centered at: {}".format(ax0_centered, ax1_centered))
-time.sleep(2.0)
+time.sleep(3.0)
 
 def position():
-	ax0_pos = int(input("Enter position for axis 0: "))
+	ax0_pos = int(input("\nEnter position for axis 0: "))
 
 	if ax0_pos > ax0_max_lim or ax0_pos < ax0_min_lim:
 		print("ax0 out of range!")
