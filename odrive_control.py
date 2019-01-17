@@ -78,20 +78,6 @@ def position():
 	drive_1.axis1.controller.pos_setpoint = ax1_pos
 	print("moving to: {}".format(ax1_pos))
 
-	# ax0_current_pos = drive_1.axis0.controller.pos_setpoint 
-	# ax1_current_pos = drive_1.axis1.controller.pos_setpoint 
-
-	# print("\naxis 0 position: {} \naxis 1 position: {}".format(ax0_current_pos, ax1_current_pos))
-	# new_pos = input("\nnew position?")
-
-	# if new_pos.lower() == "y":
-	# 	position()	
-	# else:
-	# 	print("\nreturning home")
-	# 	drive_1.axis0.controller.pos_setpoint = 0
-	# 	drive_1.axis1.controller.pos_setpoint = 0
-	# 	exit()
-
 # move the actual arm
 def movement(ax0_pos, ax1_pos):
 	drive_1.axis0.controller.pos_setpoint = ax0_pos
