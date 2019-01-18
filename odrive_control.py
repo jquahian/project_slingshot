@@ -10,9 +10,16 @@ ax1_min_lim = 0
 ax0_max_lim = 275000
 ax1_max_lim = 425000
 
+# gear ratios for the axis
+ax0_gearing = 128
+ax1_gearing = 64
+
+# encoder counts per revolution
+encoder_cpr = 8192
+
 # centered position
 ax0_centered = 90000
-ax1_centered = 205000
+ax1_centered = 200000
 
 print('\n\nbeginning calibration...')
 # find the first odrive
@@ -56,38 +63,35 @@ def options():
 
 # set position manually
 def position():
-	ax0_pos = int(input("\nEnter position for axis 0: "))
+	ax0_degs = int(input("\nEnter position for axis 0: "))
+	ax0_counts = int((ax0_degs / 360) * (ax0_gearing * encoder_cpr))
 
-	if ax0_pos > ax0_max_lim or ax0_pos < ax0_min_lim:
+	if ax0_counts > ax0_max_lim or ax0_counts < ax0_min_lim:
 		print("axis 0 out of range!")
-		ax0_pos = 0
+		ax0_counts = 0
 		position()
 
-	ax1_pos = int(input("Enter position for axis 1: "))
 
-	if ax1_pos > ax1_max_lim or ax1_pos < ax0_min_lim:
+	ax1_degs = int(input("Enter position for axis 1: "))
+	ax1_counts = int((ax1_degs / 360) * (ax1_gearing * encoder_cpr))
+
+	if ax1_counts > ax1_max_lim or ax1_counts < ax0_min_lim:
 		print("axis 1 out of range!")
-		ax1_pos = 0
+		ax1_counts = 0
 		position()
 
-	movement(ax0_pos, ax1_pos)
-
-	drive_1.axis0.controller.pos_setpoint = ax0_pos
-	print("\nmoving to: {}".format(ax0_pos))
-
-	drive_1.axis1.controller.pos_setpoint = ax1_pos
-	print("moving to: {}".format(ax1_pos))
+	movement(ax0_counts, ax1_counts)
 
 # move the actual arm
-def movement(ax0_pos, ax1_pos):
-	drive_1.axis0.controller.pos_setpoint = ax0_pos
-	print("\nmoving to: {}".format(ax0_pos))
+def movement(ax0_counts, ax1_counts):
+	drive_1.axis0.controller.pos_setpoint = ax0_counts
+	print("\nmoving to: {}".format(ax0_counts))
 
-	drive_1.axis1.controller.pos_setpoint = ax1_pos
-	print("moving to: {}".format(ax1_pos))
+	drive_1.axis1.controller.pos_setpoint = ax1_counts
+	print("moving to: {}".format(ax1_counts))
 
-	ax0_current_pos = drive_1.axis0.controller.pos_setpoint 
-	ax1_current_pos = drive_1.axis1.controller.pos_setpoint 
+	ax0_current_pos = (drive_1.axis0.controller.pos_setpoint/(ax0_gearing * encoder_cpr) * 360) 
+	ax1_current_pos = (drive_1.axis1.controller.pos_setpoint/(ax1_gearing * encoder_cpr) * 360)  
 
 	print("\naxis 0 position: {} \naxis 1 position: {}".format(ax0_current_pos, ax1_current_pos))
 
