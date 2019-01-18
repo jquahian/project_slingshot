@@ -11,8 +11,8 @@ ax0_max_lim = 262144 # 180 degrees of rotation
 ax1_max_lim = 393216 # 135 degrees of rotation
 
 # gear ratios for the axis
-ax0_gearing = 128
-ax1_gearing = 64
+ax0_gearing = 64
+ax1_gearing = 128
 
 # encoder counts per revolution
 encoder_cpr = 8192
@@ -92,7 +92,7 @@ def movement(ax0_counts, ax1_counts):
 	ax0_current_pos = (drive_1.axis0.controller.pos_setpoint/(ax0_gearing * encoder_cpr) * 360) 
 	ax1_current_pos = (drive_1.axis1.controller.pos_setpoint/(ax1_gearing * encoder_cpr) * 360)  
 
-	print("\naxis 0 position: {} \naxis 1 position: {}".format(ax0_current_pos, ax1_current_pos))
+	print("\naxis 0 position: {} degrees \naxis 1 position: {} degrees".format(ax0_current_pos, ax1_current_pos))
 
 	options()
 
