@@ -7,8 +7,8 @@ ax0_min_lim = 0
 ax1_min_lim = 0
 
 # soft maximums
-ax0_max_lim = 275000
-ax1_max_lim = 425000
+ax0_max_lim = 262144 # 180 degrees of rotation
+ax1_max_lim = 393216 # 135 degrees of rotation
 
 # gear ratios for the axis
 ax0_gearing = 128
@@ -61,7 +61,7 @@ def options():
 	else:
 		exit_control()
 
-# set position manually
+# set the absolute position manually
 def position():
 	ax0_degs = int(input("\nEnter position for axis 0: "))
 	ax0_counts = int((ax0_degs / 360) * (ax0_gearing * encoder_cpr))
@@ -70,7 +70,6 @@ def position():
 		print("axis 0 out of range!")
 		ax0_counts = 0
 		position()
-
 
 	ax1_degs = int(input("Enter position for axis 1: "))
 	ax1_counts = int((ax1_degs / 360) * (ax1_gearing * encoder_cpr))
@@ -82,7 +81,7 @@ def position():
 
 	movement(ax0_counts, ax1_counts)
 
-# move the actual arm
+# move the arm
 def movement(ax0_counts, ax1_counts):
 	drive_1.axis0.controller.pos_setpoint = ax0_counts
 	print("\nmoving to: {}".format(ax0_counts))
