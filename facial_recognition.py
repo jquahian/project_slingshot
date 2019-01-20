@@ -59,11 +59,16 @@ while True:
     delta_y = frame_mid_y - center_point_y
     cv2.putText(frame, (f'Deltas: ({delta_x}, {delta_y})'), (10, 75), font, font_size, main_font_color)
 
+    # calculate the area of the rectangle over the face -- changes in this value over time will tell us whether the person is moving towards or away from the camera
+    face_width = w
+    face_height = h
+
+    face_area = (w * h)/10000
+    cv2.putText(frame, (f'Face Area: {face_area} units^2'), (10, 100), font, font_size, main_font_color)
+
     # assume 30 units from camera... fixe value until we get a range finder
     ax_1_theta = math.degrees(np.arctan(delta_y/30))
-    cv2.putText(frame, (f'AXIS 1 DEGREES TO MOVE: ({ax_1_theta})'), (10, 100), font, font_size, highlight_font_color)
-
-    # pass the degrees calculated here back to odrive_control and re-position to space relative to current rotation on axis 1
+    cv2.putText(frame, (f'AXIS 1 DEGREES TO MOVE: ({ax_1_theta})'), (10, 125), font, font_size, highlight_font_color)
 
     # EVERYTHING GOES ABOVE THIS LINE #
     # Display the resulting frame
@@ -74,4 +79,3 @@ while True:
 
 video_capture.release()
 cv2.destroyAllWindows()
-print(video_capture.isOpened())
