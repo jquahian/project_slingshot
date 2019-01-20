@@ -9,7 +9,7 @@ font_size = 1
 main_font_color = (255, 255, 255)
 highlight_font_color = (0, 0, 255)
 
-# need this to be not hard coded?
+# specify correct path when changing computers
 frontalface_path = 'C:/Users/Josh/Anaconda3/pkgs/opencv-3.3.1-py36h20b85fd_1/Library/etc/haarcascades/haarcascade_frontalface_default.xml'
 
 face_cascade = cv2.CascadeClassifier(frontalface_path)
