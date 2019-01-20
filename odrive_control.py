@@ -106,9 +106,17 @@ def relative_rotation():
 
 	# calculate the deltas between current encoder count and needed encoder count
 	ax0_counts = ax0_current_pos
+
 	ax1_counts = int(ax1_move_to_counts - ax1_current_pos)
 
-	# move the arm ... but don't move ax0 for now
+	# set soft locks for axis 1
+
+	if ax1_counts > ax1_max_lim:
+		ax1_counts = ax1_max_lim
+	elif ax1_counts < ax1_min_lim:
+		ax1_counts = ax1_min_lim
+
+	# move axis 1 only (for now)
 	movement(ax0_counts, ax1_counts)
 
 # move the arm
