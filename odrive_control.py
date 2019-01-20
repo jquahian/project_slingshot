@@ -51,12 +51,22 @@ time.sleep(3.0)
 # options to operate the arm
 def options():
 	print("\nselect command:")
-	sel = input("(a) absolute rotation \n(b) home \n(c) exit \nCOMMAND: ")
+	sel = input("(a) absolute rotation \n(b) home \n(c) facial tracking \n(z) exit \nCOMMAND: ")
 	if sel.lower() == 'a':
 		absolute_rotation()
 	elif sel.lower() == 'b':
 		movement(ax0_centered, ax1_centered)
 	elif sel.lower() == 'c':
+		import facial_recognition as fr
+		# stream the position while video capture is open
+		while fr.video_capture.isOpened() == True:
+			# maybe it will prevent an overflow?	
+			time.sleep(0.25)
+			relative_rotation()
+		else:
+			movement(ax0_centered, ax1_centered)
+			options()
+	elif sel.lower() == 'z':
 		exit_control()
 	else:
 		print("\ninvalid command")
@@ -82,6 +92,25 @@ def absolute_rotation():
 
 	movement(ax0_counts, ax1_counts)
 
+# set the relative rotation
+def relative_rotation():
+	# get the current position of the arm in degrees
+	ax0_current_pos = (drive_1.axis0.controller.pos_setpoint/(ax0_gearing * encoder_cpr) * 360) 
+	ax1_current_pos = (drive_1.axis1.controller.pos_setpoint/(ax1_gearing * encoder_cpr) * 360)
+
+	# find the relative degrees to move to
+	ax1_move_to = fr.ax_1_theta
+
+	# convert the degrees to encoder counts
+	ax1_move_to_counts = (ax1_move_to / 360) * (gear_ratio * encoder_cpr)
+
+	# calculate the deltas between current encoder count and needed encoder count
+	ax0_counts = ax0_current_pos
+	ax1_counts = int(ax1_move_to_counts - ax1_current_pos)
+
+	# move the arm ... but don't move ax0 for now
+	movement(ax0_counts, ax1_counts)
+
 # move the arm
 def movement(ax0_counts, ax1_counts):
 	drive_1.axis0.controller.pos_setpoint = ax0_counts
@@ -94,8 +123,6 @@ def movement(ax0_counts, ax1_counts):
 	ax1_current_pos = (drive_1.axis1.controller.pos_setpoint/(ax1_gearing * encoder_cpr) * 360)  
 
 	print("\naxis 0 position: {} degrees \naxis 1 position: {} degrees".format(ax0_current_pos, ax1_current_pos))
-
-	options()
 
 def exit_control():
 	print("\nreturning to zero")

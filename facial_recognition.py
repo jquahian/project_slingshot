@@ -19,7 +19,6 @@ video_capture = cv2.VideoCapture(0)
 while True:
     # Capture frame-by-frame
     ret, frame = video_capture.read()
-
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     # get width and length of the video stream
@@ -73,6 +72,6 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-# have the arm go back to zero and release the capture
 video_capture.release()
 cv2.destroyAllWindows()
+print(video_capture.isOpened())
