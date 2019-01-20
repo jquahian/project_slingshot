@@ -61,7 +61,7 @@ def options():
 		# stream the position while video capture is open
 		while fr.video_capture.isOpened() == True:
 			# maybe it will prevent an overflow?	
-			time.sleep(0.25)
+			time.sleep(3)
 			relative_rotation()
 		else:
 			movement(ax0_centered, ax1_centered)
@@ -98,7 +98,7 @@ def relative_rotation():
 	ax0_current_pos = (drive_1.axis0.controller.pos_setpoint/(ax0_gearing * encoder_cpr) * 360) 
 	ax1_current_pos = (drive_1.axis1.controller.pos_setpoint/(ax1_gearing * encoder_cpr) * 360)
 
-	# find the relative degrees to move to
+	# find the relative degrees to move
 	ax1_move_to = fr.ax_1_theta
 
 	# convert the degrees to encoder counts
@@ -107,7 +107,7 @@ def relative_rotation():
 	# calculate the deltas between current encoder count and needed encoder count
 	ax0_counts = ax0_current_pos
 
-	ax1_counts = int(ax1_move_to_counts - ax1_current_pos)
+	ax1_counts = int(ax1_current_pos + ax1_move_to_counts)
 
 	# set soft locks for axis 1
 
