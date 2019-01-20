@@ -7,7 +7,9 @@ import math
 font = cv2.FONT_HERSHEY_PLAIN
 font_size = 1
 main_font_color = (255, 255, 255)
+highlight_font_color = (0, 0, 255)
 
+# need this to be not hard coded?
 frontalface_path = 'C:/Users/Josh/Anaconda3/pkgs/opencv-3.3.1-py36h20b85fd_1/Library/etc/haarcascades/haarcascade_frontalface_default.xml'
 
 face_cascade = cv2.CascadeClassifier(frontalface_path)
@@ -60,10 +62,9 @@ while True:
 
     # assume 30 units from camera... fixe value until we get a range finder
     ax_1_theta = math.degrees(np.arctan(delta_y/30))
-    cv2.putText(frame, (f'axis 1 degrees: ({ax_1_theta})'), (10, 100), font, font_size, main_font_color)
+    cv2.putText(frame, (f'AXIS 1 DEGREES TO MOVE: ({ax_1_theta})'), (10, 100), font, font_size, highlight_font_color)
 
     # pass the degrees calculated here back to odrive_control and re-position to space relative to current rotation on axis 1
-
 
     # EVERYTHING GOES ABOVE THIS LINE #
     # Display the resulting frame
@@ -72,6 +73,6 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-# When everything is done, release the capture
+# have the arm go back to zero and release the capture
 video_capture.release()
 cv2.destroyAllWindows()
