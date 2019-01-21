@@ -18,7 +18,7 @@ ax1_gearing = 128
 encoder_cpr = 8192
 
 # centered position
-ax0_centered = 90000
+ax0_centered = 131072
 ax1_centered = 200000
 
 print('\n\nbeginning calibration...')
