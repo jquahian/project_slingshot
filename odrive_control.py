@@ -18,7 +18,7 @@ ax1_gearing = 128
 encoder_cpr = 8192
 
 # centered position
-ax0_centered = 131072
+ax0_centered = 95000
 ax1_centered = 200000
 
 print('\n\nbeginning calibration...')
@@ -85,7 +85,7 @@ def absolute_rotation():
 	movement(ax0_counts, ax1_counts)
 
 # move the arm
-def movement(ax0_counts, ax1_counts, relative_mode):
+def movement(ax0_counts, ax1_counts):
 	drive_1.axis0.controller.pos_setpoint = ax0_counts
 	print("\nmoving to: {}".format(ax0_counts))
 
@@ -97,8 +97,7 @@ def movement(ax0_counts, ax1_counts, relative_mode):
 
 	print("\naxis 0 position: {} degrees \naxis 1 position: {} degrees".format(ax0_current_pos, ax1_current_pos))
 
-	if relative_mode == False:
-		options()
+	options()
 
 def exit_control():
 	print("\nreturning to zero")

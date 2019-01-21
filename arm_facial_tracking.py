@@ -14,8 +14,8 @@ ax0_max_lim = 262144 # 180 degrees of rotation
 ax1_max_lim = 393216 # 135 degrees of rotation
 
 # centered position
-ax0_centered = 131072
-ax1_centered = 189326
+ax0_centered = 95000
+ax1_centered = 250000
 
 # gear ratios for the axis
 ax0_gearing = 64
