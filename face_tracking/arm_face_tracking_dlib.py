@@ -1,3 +1,5 @@
+# lots of code based on tutorials from: https://www.pyimagesearch.com/
+
 # USAGE
 # python arm_face_tracking_dlib.py --shape-predictor shape_predictor_68_face_landmarks.dat
 # python arm_face_tracking_dlib.py --shape-predictor shape_predictor_68_face_landmarks.dat --picamera 1
@@ -30,7 +32,7 @@ ax1_max_lim = 393216 # 135 degrees of rotation
 ax0_centered = 95000
 ax1_centered = 250000
 
-video_width = 300
+video_width = 200
 
 head_vertical_threshold = 15
 
