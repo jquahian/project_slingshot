@@ -176,9 +176,9 @@ while True:
 		if abs(eye_theta) >= 5:
 
 			if eye_theta >=0:
-				ax0_current_pos += int(2917/2)
+				ax0_current_pos += int(1456/2)
 			else:
-				ax0_current_pos -= int(2917/2)
+				ax0_current_pos -= int(1456/2)
 
 			# soft locks
 			if ax0_current_pos > ax0_max_lim:
