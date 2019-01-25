@@ -1,6 +1,6 @@
 # USAGE
-# python arm_face_tracking.py --shape-predictor shape_predictor_68_face_landmarks.dat
-# python arm_face_tracking.py --shape-predictor shape_predictor_68_face_landmarks.dat --picamera 1
+# python arm_face_tracking_dlib.py --shape-predictor shape_predictor_68_face_landmarks.dat
+# python arm_face_tracking_dlib.py --shape-predictor shape_predictor_68_face_landmarks.dat --picamera 1
 
 # import the necessary packages
 from imutils.video import VideoStream
@@ -30,9 +30,11 @@ ax1_max_lim = 393216 # 135 degrees of rotation
 ax0_centered = 95000
 ax1_centered = 250000
 
-video_width = 320
+video_width = 300
 
-search_radius = 5
+head_vertical_threshold = 15
+
+head_rotation_threshold = 10
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -97,7 +99,7 @@ while True:
 	frame_mid_x = int(frame_width/2)
 	frame_mid_y = int(frame_height/2)
 
-	cv2.circle(frame, (frame_mid_x, frame_mid_y), search_radius, (255, 0, 0), 1)
+	cv2.circle(frame, (frame_mid_x, frame_mid_y), head_vertical_threshold, (255, 0, 0), 1)
 
 	# detect faces in the grayscale frame
 	rects = detector(gray, 0)
@@ -151,10 +153,10 @@ while True:
 
 		cv2.circle(frame, (face_mid_x, face_mid_y), 1, (0, 255, 255), -1)
 
-		face_vert_displacement = frame_mid_y - frame_mid_y
+		face_vert_displacement = frame_mid_y - face_mid_y
 
 		# move the arm to match the vertical displacement of the face
-		if abs(face_vert_displacement) > search_radius:
+		if abs(face_vert_displacement) > head_vertical_threshold:
 			ax1_current_pos = drive_1.axis1.controller.pos_setpoint
 
 			# modify the current position equivalent to 0.5 degrees
@@ -173,12 +175,13 @@ while True:
 			drive_1.axis1.controller.pos_setpoint = ax1_current_pos
 
 		# move the arm to match the rotational displacement of the face
-		if abs(eye_theta) >= 5:
+		if abs(eye_theta) >= head_rotation_threshold:
+			ax0_current_pos = drive_1.axis0.controller.pos_setpoint
 
 			if eye_theta >=0:
-				ax0_current_pos += int(1456/2)
-			else:
 				ax0_current_pos -= int(1456/2)
+			else:
+				ax0_current_pos += int(1456/2)
 
 			# soft locks
 			if ax0_current_pos > ax0_max_lim:
