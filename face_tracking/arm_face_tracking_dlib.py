@@ -209,7 +209,7 @@ while True:
  
 # do a bit of cleanup
 # reset the arm
-drive_1.axis0.controller.pos_setpoint = 0
-drive_1.axis1.controller.pos_setpoint = 0
 cv2.destroyAllWindows()
 vs.stop()
+drive_1.axis0.controller.pos_setpoint = 0
+drive_1.axis1.controller.pos_setpoint = 0
