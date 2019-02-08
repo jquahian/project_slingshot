@@ -11,13 +11,6 @@ ax1_min_lim = 0
 ax0_max_lim = 262144 # 180 degrees of rotation
 ax1_max_lim = 393216 # 135 degrees of rotation
 
-# gear ratios for the axis
-ax0_gearing = 64
-ax1_gearing = 128
-
-# encoder counts per revolution
-encoder_cpr = 8192
-
 # centered position
 ax0_centered = 95000
 ax1_centered = 200000
@@ -127,15 +120,30 @@ while done == False:
 		for axis in range(axes_count):
 			axis_value = joystick.get_axis(axis)
 			textPrint.print(screen, "Axis {} value: {:>6.3f}".format(axis, axis_value))
+			
 			# MOVE AXIS HERE
-			if axis == 0 and abs(axis_value) >= 0.15:
-				a += 1 * axis_value
-				print(a)
+			if axis == 4 and abs(axis_value) >= 0.15:
+				if drive_1.axis0.controller.pos_setpoint > ax0_max_lim:
+					drive_1.axis0.controller.pos_setpoint = ax0_max_lim
+				elif drive_1.axis0.controller.pos_setpoint < ax0_min_lim:
+					drive_1.axis0.controller.pos_setpoint = ax0_min_lim
+				else:
+					drive_1.axis0.controller.pos_setpoint += (int(2917/2) * axis_value)
+
+			if axis == 1 and abs(axis_value) >= 0.15:
+				if drive_1.axis1.controller.pos_setpoint > ax1_max_lim:
+					drive_1.axis1.controller.pos_setpoint = ax1_max_lim
+				elif drive_1.axis1.controller.pos_setpoint < ax1_min_lim:
+					drive_1.axis1.controller.pos_setpoint = ax1_min_lim
+				else:
+					drive_1.axis1.controller.pos_setpoint += (int(2917/2) * -axis_value)
 
 		# handle the button inputs -- output is 0/1
 		for button in range(button_count):
 			btn_value = joystick.get_button(button)
 			if button == 6 and btn_value == 1:
+				drive_1.axis0.controller.pos_setpoint = 0
+				drive_1.axis1.controller.pos_setpoint = 0
 				done = True
 			textPrint.print(screen, "Btn {} value: {}".format(button, btn_value))
 
