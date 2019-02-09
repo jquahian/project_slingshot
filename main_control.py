@@ -1,7 +1,7 @@
 import odrive
 import time
-from odrive.enums import *
 import degrees_calc as dc
+from odrive.enums import *
 
 # gear ratios
 ax0_gearing = 64
@@ -26,53 +26,57 @@ reduction_128 = dc.return_counts(1, ax1_gearing)
 # find the first odrive
 drive_1 = odrive.find_any()
 
-ax0_req_state = drive_1.axis0.requested_state
-ax1_req_state = drive_1.axis1.requested_state
-
-ax0_pos = drive_1.axis0.controller.pos_setpoint
-ax1_pos = drive_1.axis1.controller.pos_setpoint
-
 def calibrate_all():	
 	print('\n\nbeginning calibration...')
 
 	# calibrate the motors
-	ax0_req_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
+	drive_1.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
 	print("\nnow calibrating axis 0")
-	while ax0_req_state != AXIS_STATE_IDLE:
+	while drive_1.axis0.current_state != AXIS_STATE_IDLE:
 		time.sleep(3.0)
 
-	ax1_req_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
+	drive_1.axis1.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
 	print("now calibrating axis 1")
-	while ax1_req_state != AXIS_STATE_IDLE:
+	while drive_1.axis1.current_state != AXIS_STATE_IDLE:
 		time.sleep(3.0)
 
 	# enter closed-loop control for both motors
 	print("\nentering closed-loop control")
-	ax0_req_state = AXIS_STATE_CLOSED_LOOP_CONTROL
-	ax1_req_state = AXIS_STATE_CLOSED_LOOP_CONTROL
+	drive_1.axis0.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
+	drive_1.axis1.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
 
 	# move off of home to home position which is rougly centered
 	print("\nmoving to home")
-	ax0_pos = ax0_centered
-	ax1_pos = ax1_centered
-	print("axis 0 homed at: {} \naxis 1 homed at: {}".format(ax0_pos, ax1_pos))
+	drive_1.axis0.controller.pos_setpoint = ax0_centered
+	drive_1.axis1.controller.pos_setpoint = ax1_centered
+	print("axis 0 homed at: {} \naxis 1 homed at: {}".format(drive_1.axis0.controller.pos_setpoint, 
+															 drive_1.axis1.controller.pos_setpoint))
 	time.sleep(3.0)
 
 	print("\nslingshot fully calibrated")
 
 def home_axis():
-	ax0_pos = 0
-	ax1_pos = 0
+	drive_1.axis0.controller.pos_setpoint = 0
+	drive_1.axis1.controller.pos_setpoint = 0
 
-def move_axis(axis, axis_min, axis_max, num_degrees, multiplier):
+def move_axis(axis, axis_min, axis_max, num_degrees, multiplier, speed_multi):
+	
 	# send commands to each joint
-
-	if axis < axis_min:
-		axis = axis_min
-	elif axis > axis_max:
-		axis = axis_max
-	else:
-		axis += ((int(2917/2) * multiplier)) 
+	if axis == 0:
+		if drive_1.axis0.controller.pos_setpoint < axis_min:
+			drive_1.axis0.controller.pos_setpoint = axis_min
+		elif drive_1.axis0.controller.pos_setpoint > axis_max:
+			drive_1.axis0.controller.pos_setpoint = axis_max
+		else:
+			drive_1.axis0.controller.pos_setpoint += (num_degrees * multiplier * speed_multi) 
+	
+	if axis == 1:
+		if drive_1.axis1.controller.pos_setpoint < axis_min:
+			drive_1.axis1.controller.pos_setpoint = axis_min
+		elif drive_1.axis1.controller.pos_setpoint > axis_max:
+			drive_1.axis1.controller.pos_setpoint = axis_max
+		else:
+			drive_1.axis1.controller.pos_setpoint += (num_degrees * multiplier * speed_multi)
 
 def move_arm():
 	# move all joints to specific point in space
