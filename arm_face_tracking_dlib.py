@@ -125,9 +125,9 @@ while True:
 
 		# move the arm to match the rotational displacement of the face
 		if abs(eye_theta) >= head_rotation_threshold:
-			mc.move_axis(0, 
-						 mc.ax1_min_lim, 
-						 mc.ax1_max_lim,
+			mc.move_axis(0,
+						 mc.ax0_min_lim, 
+						 mc.ax0_max_lim,
 						 mc.reduction_64,
 						 1,
 						 1)
