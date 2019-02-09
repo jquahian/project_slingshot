@@ -1,2 +1,3 @@
 temp/
+docs/
 face_tracking/shape_predictor_68_face_landmarks.dat
