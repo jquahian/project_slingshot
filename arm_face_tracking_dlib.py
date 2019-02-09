@@ -8,29 +8,13 @@
 from imutils.video import VideoStream
 from imutils import face_utils
 from scipy.spatial import distance as dist
-from odrive.enums import *
 import datetime
 import argparse
 import imutils
-import time
 import dlib
 import cv2
 import math
-import odrive
-import time
-
-
-#soft minimums
-ax0_min_lim = 0
-ax1_min_lim = 0
-
-# soft maximums
-ax0_max_lim = 262144 # 180 degrees of rotation
-ax1_max_lim = 393216 # 135 degrees of rotation
-
-# centered position
-ax0_centered = 95000
-ax1_centered = 250000
+import main_control as mc
 
 video_width = 200
 
@@ -45,42 +29,15 @@ ap.add_argument("-p", "--shape-predictor", required=True,
 ap.add_argument("-r", "--picamera", type=int, default=-1,
 	help="whether or not the Raspberry Pi camera should be used")
 args = vars(ap.parse_args())
-
-print('\n\nbeginning calibration...')
-# find the first odrive
-drive_1 = odrive.find_any()
-
-# calibrate the motors
-drive_1.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
-print("\nnow calibrating axis 0")
-while drive_1.axis0.current_state != AXIS_STATE_IDLE:
-	time.sleep(3.0)
-
-drive_1.axis1.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
-print("now calibrating axis 1")
-while drive_1.axis1.current_state != AXIS_STATE_IDLE:
-	time.sleep(3.0)
-
-# enter closed-loop control for both motors
-print("\nentering closed-loop control")
-drive_1.axis0.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
-drive_1.axis1.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
-
-# move off of home to home position which is rougly centered
-print("\nmoving to home")
-drive_1.axis0.controller.pos_setpoint = ax0_centered
-drive_1.axis1.controller.pos_setpoint = ax1_centered
-print("axis 0 homed at: {} \naxis 1 homed at: {}".format(ax0_centered, ax1_centered))
-time.sleep(3.0)
  
+mc.calibrate_all()
+
 # initialize dlib's face detector (HOG-based) and then create
 # the facial landmark predictor
-print("[INFO] loading facial landmark predictor...")
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor(args["shape_predictor"])
 
 # initialize the video stream and allow the cammera sensor to warmup
-print("[INFO] camera sensor warming up...")
 vs = VideoStream(usePiCamera=args["picamera"] > 0).start()
 time.sleep(2.0)
 
@@ -89,7 +46,7 @@ time.sleep(2.0)
 # loop over the frames from the video stream
 while True:
 	# grab the frame from the threaded video stream, resize it to
-	# have a maximum width of 400 pixels, and convert it to
+	# have a maximum width of 200 pixels, and convert it to
 	# grayscale
 	frame = vs.read()
 	frame = imutils.resize(frame, video_width)
@@ -98,8 +55,8 @@ while True:
 	frame_height = frame.shape[0]
 	frame_width = frame.shape[1]
 
-	frame_mid_x = int(frame_width/2)
-	frame_mid_y = int(frame_height/2)
+	frame_mid_x = int(frame_width / 2)
+	frame_mid_y = int(frame_height / 2)
 
 	cv2.circle(frame, (frame_mid_x, frame_mid_y), head_vertical_threshold, (255, 0, 0), 1)
 
@@ -143,15 +100,15 @@ while True:
 		else:
 			delta_y = dist.euclidean(eye_y_one, eye_y_two)
 
-		eye_theta = math.degrees(math.atan(delta_y/delta_x))
+		eye_theta = math.degrees(math.atan(delta_y / delta_x))
 
 		# face bounding box
 		(x, y, w, h) = face_utils.rect_to_bb(rect)	
 		cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
 		# find the center of our face bounding box
-		face_mid_x  = int(x + w/2)
-		face_mid_y = int(y + h/2)
+		face_mid_x  = int(x + w / 2)
+		face_mid_y = int(y + h / 2)
 
 		cv2.circle(frame, (face_mid_x, face_mid_y), 1, (0, 255, 255), -1)
 
@@ -159,40 +116,21 @@ while True:
 
 		# move the arm to match the vertical displacement of the face
 		if abs(face_vert_displacement) > head_vertical_threshold:
-			ax1_current_pos = drive_1.axis1.controller.pos_setpoint
-
-			# modify the current position equivalent to 0.5 degrees
-			if face_vert_displacement >= 0:
-				ax1_current_pos += int(2917/2)
-			else:
-				ax1_current_pos -= int(2917/2)
-
-			# soft locks
-			if ax1_current_pos > ax1_max_lim:
-				ax1_current_pos = ax1_max_lim
-
-			if ax1_current_pos < ax1_min_lim:
-				ax1_current_pos = ax1_min_lim
-
-			drive_1.axis1.controller.pos_setpoint = ax1_current_pos
+			mc.move_axis(1, 
+						 mc.ax1_min_lim, 
+						 mc.ax1_max_lim,
+						 mc.reduction_128,
+						 1,
+						 0.5)
 
 		# move the arm to match the rotational displacement of the face
 		if abs(eye_theta) >= head_rotation_threshold:
-			ax0_current_pos = drive_1.axis0.controller.pos_setpoint
-
-			if eye_theta >=0:
-				ax0_current_pos -= int(1456/2)
-			else:
-				ax0_current_pos += int(1456/2)
-
-			# soft locks
-			if ax0_current_pos > ax0_max_lim:
-				ax0_current_pos = ax0_max_lim
-
-			if ax0_current_pos < ax0_min_lim:
-				ax0_current_pos = ax0_min_lim
-
-			drive_1.axis0.controller.pos_setpoint = ax0_current_pos
+			mc.move_axis(0, 
+						 mc.ax1_min_lim, 
+						 mc.ax1_max_lim,
+						 mc.reduction_64,
+						 1,
+						 1)
 
 		# loop over the (x, y)-coordinates for the facial landmarks
 		# and draw them on the image
@@ -211,5 +149,4 @@ while True:
 # reset the arm
 cv2.destroyAllWindows()
 vs.stop()
-drive_1.axis0.controller.pos_setpoint = 0
-drive_1.axis1.controller.pos_setpoint = 0
+mc.home_axis()
