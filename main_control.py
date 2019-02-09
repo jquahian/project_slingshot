@@ -79,5 +79,5 @@ def move_axis(axis, axis_min, axis_max, num_degrees, multiplier, speed_multi):
 			drive_1.axis1.controller.pos_setpoint += (num_degrees * multiplier * speed_multi)
 
 def move_arm():
-	# move all joints to specific point in space
+	# move all joints to specific point in space using IK
 	pass
