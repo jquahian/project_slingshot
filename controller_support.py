@@ -15,6 +15,8 @@ ax1_max_lim = 393216 # 135 degrees of rotation
 ax0_centered = 95000
 ax1_centered = 200000
 
+# move calibration into the control script
+
 print('\n\nbeginning calibration...')
 # find the first odrive
 drive_1 = odrive.find_any()
@@ -123,6 +125,7 @@ while done == False:
 			
 			# MOVE AXIS HERE
 			if axis == 4 and abs(axis_value) >= 0.15:
+				# move all code moving the arm into the control script
 				if drive_1.axis0.controller.pos_setpoint > ax0_max_lim:
 					drive_1.axis0.controller.pos_setpoint = ax0_max_lim
 				elif drive_1.axis0.controller.pos_setpoint < ax0_min_lim:
