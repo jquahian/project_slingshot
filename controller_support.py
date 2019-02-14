@@ -105,21 +105,23 @@ while done == False:
 			btn_value = joystick.get_button(button)
 			# home robot and exit
 			if button == 6 and btn_value == 1:
+				print("RETURNING HOME AND EXITING")
 				mc.home_axis()
 				done = True
 
-			# no idea what button this is
-			if button == 1 and btn_value == 1:
+			# A button
+			if button == 0 and btn_value == 1:
 				mc.record_movement()
 
-			# no idea what button this is
-			if button == 2 and btn_value == 1:
+			# start button
+			if button == 7 and btn_value == 1:
 				mc.playback_movement()
 			
-			# no idea what button this is
-			if button == 3 and btn_value == 1:
+			# B button
+			if button == 1 and btn_value == 1:
 				# this is a fucking stupid way to do this
-				mc.clear_recording()
+				if len(mc.ax0_pos_array) != 0: 
+					mc.clear_recording()
 
 			textPrint.print(screen, "Btn {} value: {}".format(button, btn_value))
 
@@ -128,6 +130,7 @@ while done == False:
 		# right (1, 0)
 		# down (0, -1)
 		# left(-1, 0)
+		# maybe we use this for speeds?
 		for dpad in range(dpad_count):
 			dpad_value = joystick.get_hat(dpad)
 			textPrint.print(screen, "D-pad {} value: {}".format(dpad, dpad_value))

@@ -89,9 +89,9 @@ def record_movement():
 	# move the joints manually with the controller
 	# at each point, save positions of each joint in an array
 	# then iterate through each array using a for loop to position each joint
-
 	ax0_pos_array.append(drive_1.axis0.controller.pos_setpoint)
 	ax1_pos_array.append(drive_1.axis1.controller.pos_setpoint)
+	print("POSITION SAVED")
 
 arm_currently_moving == False
 def playback_movement():
@@ -102,6 +102,7 @@ def playback_movement():
 	arm_currently_moving == True
 	
 	for target in range(len(ax0_pos_array)):
+		print(f"MOVING TO POSITION {target}")
 		drive_1.axis0.controller.pos_setpoint = ax0_pos_array[target]
 		drive_1.axis1.controller.pos_setpoint = ax1_pos_array[target]
 
@@ -121,5 +122,6 @@ def playback_movement():
 
 # can only have one recording at a time.  This is gross as hell
 def clear_recording():
+	print("RECORDINGS CLEAR")
 	ax0_pos_array = []
 	ax1_pos_array = []
