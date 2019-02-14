@@ -81,3 +81,45 @@ def move_axis(axis, axis_min, axis_max, num_degrees, multiplier, speed_multi):
 def move_arm():
 	# move all joints to specific point in space using IK
 	pass
+
+ax0_pos_array = []
+ax1_pos_array = []
+
+def record_movement():
+	# move the joints manually with the controller
+	# at each point, save positions of each joint in an array
+	# then iterate through each array using a for loop to position each joint
+
+	ax0_pos_array.append(drive_1.axis0.controller.pos_setpoint)
+	ax1_pos_array.append(drive_1.axis1.controller.pos_setpoint)
+
+arm_currently_moving == False
+def playback_movement():
+	# iterate through our saved target points and move the arm
+	# we can use any of the arrays -- they'll all have the same number of targets (probably)
+	
+	# prevents us from moving the arm using the joysticks
+	arm_currently_moving == True
+	
+	for target in range(len(ax0_pos_array)):
+		drive_1.axis0.controller.pos_setpoint = ax0_pos_array[target]
+		drive_1.axis1.controller.pos_setpoint = ax1_pos_array[target]
+
+		# wait until each joint is at the predefined position before moving to the next position
+		# this is also a fucking ugly if statment christ...
+
+		if drive_1.axis0.controller.pos_setpoint == ax0_pos_array[target] and 
+		   drive_1.axis1.controller.pos_setpoint == ax1_pos_array[target]:
+		   # drive_1.axis2.controller.pos_setpoint == ax2_pos_array[target] and # don't have this motor yet
+		   # drive_1.axis3.controller.pos_setpoint == ax3_pos_array[target] and # don't have this motor yet
+		   # drive_1.axis4.controller.pos_setpoint == ax4_pos_array[target] and # don't have this motor yet
+		   # drive_1.axis5.controller.pos_setpoint == ax5_pos_array[target] and: # don't have this motor yet
+		   target += 1
+
+	# gets the arm moving again with the controller -- or it should at least...
+	arm_currently_moving == False
+
+# can only have one recording at a time.  This is gross as hell
+def clear_recording():
+	ax0_pos_array = []
+	ax1_pos_array = []

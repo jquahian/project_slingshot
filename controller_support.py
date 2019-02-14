@@ -83,7 +83,7 @@ while done == False:
 			textPrint.print(screen, "Axis {} value: {:>6.3f}".format(axis, axis_value))
 			
 			# MOVE AXIS HERE
-			if axis == 4 and abs(axis_value) >= 0.15:
+			if axis == 4 and abs(axis_value) >= 0.15 and mc.arm_currently_moving == False:
 				# move all code moving the arm into the control script
 				mc.move_axis(0, 
 							 mc.ax0_min_lim, 
@@ -92,7 +92,7 @@ while done == False:
 							 1, 
 							 axis_value)
 
-			if axis == 1 and abs(axis_value) >= 0.15:
+			if axis == 1 and abs(axis_value) >= 0.15 and mc.arm_currently_moving == False:
 				mc.move_axis(1, 
 							 mc.ax1_min_lim,
 							 mc.ax1_max_lim, 
@@ -103,9 +103,24 @@ while done == False:
 		# handle the button inputs -- output is 0/1
 		for button in range(button_count):
 			btn_value = joystick.get_button(button)
+			# home robot and exit
 			if button == 6 and btn_value == 1:
 				mc.home_axis()
 				done = True
+
+			# no idea what button this is
+			if button == 1 and btn_value == 1:
+				mc.record_movement()
+
+			# no idea what button this is
+			if button == 2 and btn_value == 1:
+				mc.playback_movement()
+			
+			# no idea what button this is
+			if button == 3 and btn_value == 1:
+				# this is a fucking stupid way to do this
+				mc.clear_recording()
+
 			textPrint.print(screen, "Btn {} value: {}".format(button, btn_value))
 
 		# handle the D pad inputs
