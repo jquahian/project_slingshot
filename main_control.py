@@ -93,7 +93,7 @@ def record_movement():
 	ax1_pos_array.append(drive_1.axis1.controller.pos_setpoint)
 	print("POSITION SAVED")
 
-arm_currently_moving == False
+arm_currently_moving = False
 def playback_movement():
 	# iterate through our saved target points and move the arm
 	# we can use any of the arrays -- they'll all have the same number of targets (probably)
@@ -109,7 +109,7 @@ def playback_movement():
 		# wait until each joint is at the predefined position before moving to the next position
 		# this is also a fucking ugly if statment christ...
 
-		if drive_1.axis0.controller.pos_setpoint == ax0_pos_array[target] and 
+		if drive_1.axis0.controller.pos_setpoint == ax0_pos_array[target] and\
 		   drive_1.axis1.controller.pos_setpoint == ax1_pos_array[target]:
 		   # drive_1.axis2.controller.pos_setpoint == ax2_pos_array[target] and # don't have this motor yet
 		   # drive_1.axis3.controller.pos_setpoint == ax3_pos_array[target] and # don't have this motor yet
