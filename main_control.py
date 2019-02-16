@@ -33,12 +33,12 @@ def calibrate_all():
 	drive_1.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
 	print("\nnow calibrating axis 0")
 	while drive_1.axis0.current_state != AXIS_STATE_IDLE:
-		time.sleep(3.0)
+		time.sleep(1.0)
 
 	drive_1.axis1.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
 	print("now calibrating axis 1")
 	while drive_1.axis1.current_state != AXIS_STATE_IDLE:
-		time.sleep(3.0)
+		time.sleep(1.0)
 
 	# enter closed-loop control for both motors
 	print("\nentering closed-loop control")
@@ -51,7 +51,7 @@ def calibrate_all():
 	drive_1.axis1.controller.pos_setpoint = ax1_centered
 	print("axis 0 homed at: {} \naxis 1 homed at: {}".format(drive_1.axis0.controller.pos_setpoint, 
 															 drive_1.axis1.controller.pos_setpoint))
-	time.sleep(3.0)
+	time.sleep(1.0)
 
 	print("\nslingshot fully calibrated")
 
@@ -95,24 +95,26 @@ def record_movement():
 
 arm_currently_moving = False
 
-# counter to iterate through our list of targets stored previously
 target_index_position = 0
 def move_to():
-	# As long as we haven't reached the end of the list of saved positions
-	# move the arm to the first position
-	# increment the index
-	# call the function again
-	# once at the end of the list, allow the arm to move by controller again
-	if target_index_position < len(ax0_pos_array):
-		arm_currently_moving = True
-		print(f"MOVING TO POSITION {target}")
-		drive_1.axis0.controller.pos_setpoint = ax0_pos_array[target_index_position]
-		drive_1.axis1.controller.pos_setpoint = ax1_pos_array[target_index_position]
-		target_index_position += 1
-		move_to()
+
+	# if AXIS_STATE_IDLE for all joints, move to the next point
+	# until end of listed points
+	if drive_1.axis0.current_state == AXIS_STATE_IDLE and drive_1.axis1.current_state == AXIS_STATE_IDLE:
+		if target_index_position < len(ax0_pos_array):
+			arm_currently_moving = True
+			print(f"MOVING TO POSITION {target_index_position}")
+			drive_1.axis0.controller.pos_setpoint = ax0_pos_array[target_index_position]
+			drive_1.axis1.controller.pos_setpoint = ax1_pos_array[target_index_position]
+			target_index_position += 1
+			move_to()
+		else:
+			print("FINAL POSITION REACHED")
+			arm_currently_moving = False
 	else:
-		print("FINAL POSITION REACHED")
-		arm_currently_moving = False
+		# poll the arm to see if the joints are still moving
+		time.sleep(0.1)
+		move_to()
 
 # can only have one recording at a time.  This is gross as hell
 def clear_recording():
