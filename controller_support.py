@@ -45,6 +45,10 @@ class TextPrint:
 
 textPrint = TextPrint()
 
+a_btn_down = False
+b_btn_down = False
+start_btn_down = False
+
 while done == False:
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
@@ -110,18 +114,24 @@ while done == False:
 				done = True
 
 			# A button
-			if button == 0 and btn_value == 1:
+			if button == 0 and btn_value == 1 and a_btn_down == False:
+				a_btn_down = True
 				mc.record_movement()
+				a_btn_down = False
 
 			# start button
-			if button == 7 and btn_value == 1:
+			if button == 7 and btn_value == 1 and start_btn_down == False:
+				start_btn_down = True
 				mc.move_to()
-			
+				start_btn_down = False
+
 			# B button
-			if button == 1 and btn_value == 1:
+			if button == 1 and btn_value == 1 and b_btn_down == False:
 				# this is a fucking stupid way to do this
 				if len(mc.ax0_pos_array) != 0: 
+					b_btn_down = True
 					mc.clear_recording()
+					b_btn_down = False
 
 			textPrint.print(screen, "Btn {} value: {}".format(button, btn_value))
 
