@@ -99,7 +99,6 @@ target_index_position = 0
 def move_to():
 
 	# if AXIS_STATE_IDLE for all joints, move to the next point
-	# until end of listed points
 	if drive_1.axis0.current_state == AXIS_STATE_IDLE and drive_1.axis1.current_state == AXIS_STATE_IDLE:
 		if target_index_position < len(ax0_pos_array):
 			arm_currently_moving = True
@@ -111,6 +110,7 @@ def move_to():
 		else:
 			print("FINAL POSITION REACHED")
 			arm_currently_moving = False
+			target_index_position = 0
 	else:
 		# poll the arm to see if the joints are still moving
 		time.sleep(0.1)
