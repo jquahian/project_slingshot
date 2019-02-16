@@ -94,31 +94,25 @@ def record_movement():
 	print("POSITION SAVED")
 
 arm_currently_moving = False
-def playback_movement():
-	# iterate through our saved target points and move the arm
-	# we can use any of the arrays -- they'll all have the same number of targets (probably)
-	
-	# prevents us from moving the arm using the joysticks
-	arm_currently_moving == True
-	
-	for target in range(len(ax0_pos_array)):
+
+# counter to iterate through our list of targets stored previously
+target_index_position = 0
+def move_to():
+	# As long as we haven't reached the end of the list of saved positions
+	# move the arm to the first position
+	# increment the index
+	# call the function again
+	# once at the end of the list, allow the arm to move by controller again
+	if target_index_position < len(ax0_pos_array):
+		arm_currently_moving = True
 		print(f"MOVING TO POSITION {target}")
-		drive_1.axis0.controller.pos_setpoint = ax0_pos_array[target]
-		drive_1.axis1.controller.pos_setpoint = ax1_pos_array[target]
-
-		# wait until each joint is at the predefined position before moving to the next position
-		# this is also a fucking ugly if statment christ...
-
-		if drive_1.axis0.controller.pos_setpoint == ax0_pos_array[target] and\
-		   drive_1.axis1.controller.pos_setpoint == ax1_pos_array[target]:
-		   # drive_1.axis2.controller.pos_setpoint == ax2_pos_array[target] and # don't have this motor yet
-		   # drive_1.axis3.controller.pos_setpoint == ax3_pos_array[target] and # don't have this motor yet
-		   # drive_1.axis4.controller.pos_setpoint == ax4_pos_array[target] and # don't have this motor yet
-		   # drive_1.axis5.controller.pos_setpoint == ax5_pos_array[target] and: # don't have this motor yet
-		   target += 1
-
-	# gets the arm moving again with the controller -- or it should at least...
-	arm_currently_moving == False
+		drive_1.axis0.controller.pos_setpoint = ax0_pos_array[target_index_position]
+		drive_1.axis1.controller.pos_setpoint = ax1_pos_array[target_index_position]
+		target_index_position += 1
+		move_to()
+	else:
+		print("FINAL POSITION REACHED")
+		arm_currently_moving = False
 
 # can only have one recording at a time.  This is gross as hell
 def clear_recording():

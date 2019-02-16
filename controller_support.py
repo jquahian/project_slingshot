@@ -115,7 +115,7 @@ while done == False:
 
 			# start button
 			if button == 7 and btn_value == 1:
-				mc.playback_movement()
+				mc.move_to()
 			
 			# B button
 			if button == 1 and btn_value == 1:
