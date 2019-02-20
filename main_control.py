@@ -96,25 +96,23 @@ def record_movement():
 arm_currently_moving = False
 
 target_index_position = 0
-def move_to():
+def move_to(index):
 
-	# if AXIS_STATE_IDLE for all joints, move to the next point
-	if drive_1.axis0.current_state == AXIS_STATE_IDLE and drive_1.axis1.current_state == AXIS_STATE_IDLE:
-		if target_index_position < len(ax0_pos_array):
-			arm_currently_moving = True
-			print(f"MOVING TO POSITION {target_index_position}")
-			drive_1.axis0.controller.pos_setpoint = ax0_pos_array[target_index_position]
-			drive_1.axis1.controller.pos_setpoint = ax1_pos_array[target_index_position]
-			target_index_position += 1
-			move_to()
-		else:
-			print("FINAL POSITION REACHED")
-			arm_currently_moving = False
-			target_index_position = 0
+	# safety check
+	if index < len(ax0_pos_array):
+		# move the arm
+		print(f"MOVING TO TARGET {index}")
+		drive_1.axis0.controller.pos_setpoint = ax0_pos_array[index]
+		drive_1.axis1.controller.pos_setpoint = ax1_pos_array[index]
+		
+		# while the arm is moving, do not move to the next position
+		while drive_1.axis0.encoder.vel_estimate != 0 or drive_1.axis1.encoder.vel_estimate != 0:
+			time.sleep(0.1)
+
+		# recusion
+		move_to(index + 1)
 	else:
-		# poll the arm to see if the joints are still moving
-		time.sleep(0.1)
-		move_to()
+		print("LAST TARGET REACHED")
 
 # can only have one recording at a time.  This is gross as hell
 def clear_recording():
