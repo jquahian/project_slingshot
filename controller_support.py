@@ -115,23 +115,23 @@ while done == False:
 
 			# A button
 			if button == 0 and btn_value == 1 and a_btn_down == False:
-				a_btn_down = True
 				mc.record_movement()
+				a_btn_down = True
+			elif button == 0 and btn_value == 0 and a_btn_down == True:
 				a_btn_down = False
 
 			# start button
 			if button == 7 and btn_value == 1 and start_btn_down == False:
 				start_btn_down = True
 				mc.move_to()
+			elif button == 7 and btn_value == 0 and start_btn_down == True:
 				start_btn_down = False
 
 			# B button
 			if button == 1 and btn_value == 1 and b_btn_down == False:
 				# this is a fucking stupid way to do this
 				if len(mc.ax0_pos_array) != 0: 
-					b_btn_down = True
 					mc.clear_recording()
-					b_btn_down = False
 
 			textPrint.print(screen, "Btn {} value: {}".format(button, btn_value))
 
