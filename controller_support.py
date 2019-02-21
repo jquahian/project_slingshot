@@ -123,7 +123,7 @@ while done == False:
 			# start button
 			if button == 7 and btn_value == 1 and start_btn_down == False:
 				start_btn_down = True
-				mc.move_to()
+				mc.move_to(0)
 			elif button == 7 and btn_value == 0 and start_btn_down == True:
 				start_btn_down = False
 

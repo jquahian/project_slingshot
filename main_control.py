@@ -68,8 +68,7 @@ def move_axis(axis, axis_min, axis_max, num_degrees, multiplier, speed_multi):
 		elif drive_1.axis0.controller.pos_setpoint > axis_max:
 			drive_1.axis0.controller.pos_setpoint = axis_max
 		else:
-			drive_1.axis0.controller.pos_setpoint += (num_degrees * multiplier * speed_multi) 
-	
+			drive_1.axis0.controller.pos_setpoint += (num_degrees * multiplier * speed_multi)	
 	if axis == 1:
 		if drive_1.axis1.controller.pos_setpoint < axis_min:
 			drive_1.axis1.controller.pos_setpoint = axis_min
@@ -95,7 +94,6 @@ def record_movement():
 
 arm_currently_moving = False
 
-target_index_position = 0
 def move_to(index):
 
 	# safety check
@@ -104,18 +102,18 @@ def move_to(index):
 		print(f"MOVING TO TARGET {index}")
 		drive_1.axis0.controller.pos_setpoint = ax0_pos_array[index]
 		drive_1.axis1.controller.pos_setpoint = ax1_pos_array[index]
-		
+		time.sleep(0.1)
 		# while the arm is moving, do not move to the next position
-		while drive_1.axis0.encoder.vel_estimate != 0 or drive_1.axis1.encoder.vel_estimate != 0:
+		while drive_1.axis0.encoder.vel_estimate != 0 or drive_1.axis1.encoder.vel_estimate != 0:		
 			time.sleep(0.1)
-
-		# recusion
-		move_to(index + 1)
+		else:
+			# recusion
+			move_to(index + 1)
 	else:
 		print("LAST TARGET REACHED")
 
 # can only have one recording at a time.  This is gross as hell
 def clear_recording():
 	print("RECORDINGS CLEAR")
-	ax0_pos_array = []
-	ax1_pos_array = []
+	ax0_pos_array.clear()
+	ax1_pos_array.clear()
