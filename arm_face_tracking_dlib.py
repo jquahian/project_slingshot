@@ -8,7 +8,7 @@
 from imutils.video import VideoStream
 from imutils import face_utils
 from scipy.spatial import distance as dist
-import datetime
+import time
 import argparse
 import imutils
 import dlib
@@ -16,11 +16,11 @@ import cv2
 import math
 import main_control as mc
 
-video_width = 200
+video_width = 600
 
-head_vertical_threshold = 15
+head_vertical_threshold = 25
 
-head_rotation_threshold = 10
+head_rotation_threshold = 15
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -116,21 +116,29 @@ while True:
 
 		# move the arm to match the vertical displacement of the face
 		if abs(face_vert_displacement) > head_vertical_threshold:
-			mc.move_axis(1, 
-						 mc.ax1_min_lim, 
-						 mc.ax1_max_lim,
+			if face_vert_displacement > 0:
+				speed_direction = 0.75
+			else:
+				speed_direction = -0.75
+			mc.move_axis(3, 
+						 mc.ax3_min_lim, 
+						 mc.ax3_max_lim,
 						 mc.reduction_128,
 						 1,
-						 0.5)
+						 speed_direction)
 
 		# move the arm to match the rotational displacement of the face
 		if abs(eye_theta) >= head_rotation_threshold:
-			mc.move_axis(0,
-						 mc.ax0_min_lim, 
-						 mc.ax0_max_lim,
-						 mc.reduction_64,
+			if eye_theta > 0:
+				speed_direction = 7
+			else:
+				speed_direction = -7
+			mc.move_axis(4,
+						 mc.ax4_min_lim, 
+						 mc.ax4_max_lim,
+						 mc.reduction_4,
 						 1,
-						 1)
+						 speed_direction)
 
 		# loop over the (x, y)-coordinates for the facial landmarks
 		# and draw them on the image
@@ -149,4 +157,5 @@ while True:
 # reset the arm
 cv2.destroyAllWindows()
 vs.stop()
+time.sleep(1.0)
 mc.home_axis()

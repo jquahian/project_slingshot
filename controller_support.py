@@ -87,21 +87,47 @@ while done == False:
 			textPrint.print(screen, "Axis {} value: {:>6.3f}".format(axis, axis_value))
 			
 			# MOVE AXIS HERE
-			if axis == 4 and abs(axis_value) >= 0.15 and mc.arm_currently_moving == False:
-				# move all code moving the arm into the control script
+			if axis == 0 and abs(axis_value) >= 0.70 and mc.arm_currently_moving == False:
 				mc.move_axis(0, 
-							 mc.ax0_min_lim, 
+							 mc.ax0_min_lim,
 							 mc.ax0_max_lim, 
 							 mc.reduction_64,
-							 1, 
-							 axis_value)
+							 0.5,
+							 -axis_value)
 
-			if axis == 1 and abs(axis_value) >= 0.15 and mc.arm_currently_moving == False:
+			if axis == 1 and abs(axis_value) >= 0.70 and mc.arm_currently_moving == False:
 				mc.move_axis(1, 
 							 mc.ax1_min_lim,
 							 mc.ax1_max_lim, 
 							 mc.reduction_128,
-							 0.5, # increases our speed by 2
+							 0.30,
+							 -axis_value)
+
+			if axis == 4 and abs(axis_value) >= 0.70 and mc.arm_currently_moving == False:
+				# move all code moving the arm into the control script
+				mc.move_axis(2, 
+							 mc.ax2_min_lim, 
+							 mc.ax2_max_lim, 
+							 mc.reduction_64,
+							 0.50, 
+							 -axis_value)
+
+			if axis == 3 and abs(axis_value) >= 0.70 and mc.arm_currently_moving == False:
+				# move all code moving the arm into the control script
+				mc.move_axis(3, 
+							 mc.ax3_min_lim, 
+							 mc.ax3_max_lim, 
+							 mc.reduction_128,
+							 1.0, 
+							 -axis_value)
+			
+			if axis == 2 and abs(axis_value) >= 0.15 and mc.arm_currently_moving == False:
+				# move all code moving the arm into the control script
+				mc.move_axis(4, 
+							 mc.ax4_min_lim, 
+							 mc.ax4_max_lim, 
+							 mc.reduction_4,
+							 1.5, 
 							 -axis_value)
 
 		# handle the button inputs -- output is 0/1
@@ -140,7 +166,6 @@ while done == False:
 		# right (1, 0)
 		# down (0, -1)
 		# left(-1, 0)
-		# maybe we use this for speeds?
 		for dpad in range(dpad_count):
 			dpad_value = joystick.get_hat(dpad)
 			textPrint.print(screen, "D-pad {} value: {}".format(dpad, dpad_value))
