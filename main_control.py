@@ -152,6 +152,9 @@ def move_ik():
 
 ax0_pos_array = []
 ax1_pos_array = []
+ax2_pos_array = []
+ax3_pos_array = []
+ax4_pos_array = []
 
 def record_movement():
 	# move the joints manually with the controller
@@ -159,21 +162,32 @@ def record_movement():
 	# then iterate through each array using a for loop to position each joint
 	ax0_pos_array.append(drive_1.axis0.controller.pos_setpoint)
 	ax1_pos_array.append(drive_1.axis1.controller.pos_setpoint)
+	ax2_pos_array.append(drive_1.axis0.controller.pos_setpoint)
+	ax3_pos_array.append(drive_1.axis0.controller.pos_setpoint)
+	ax4_pos_array.append(drive_1.axis0.controller.pos_setpoint)
+	
 	print("POSITION SAVED")
 
 arm_currently_moving = False
 
 def move_to(index):
-
 	# safety check
+	# this is going to move at full speed...
 	if index < len(ax0_pos_array):
 		# move the arm
 		print(f"MOVING TO TARGET {index}")
 		drive_1.axis0.controller.pos_setpoint = ax0_pos_array[index]
 		drive_1.axis1.controller.pos_setpoint = ax1_pos_array[index]
+		drive_2.axis0.controller.pos_setpoint = ax2_pos_array[index]
+		drive_2.axis1.controller.pos_setpoint = ax3_pos_array[index]
+		drive_3.axis0.controller.pos_setpoint = ax4_pos_array[index]
 		time.sleep(0.1)
 		# while the arm is moving, do not move to the next position
-		while drive_1.axis0.encoder.vel_estimate != 0 or drive_1.axis1.encoder.vel_estimate != 0:		
+		while drive_1.axis0.encoder.vel_estimate != 0 or\
+				drive_1.axis1.encoder.vel_estimate != 0 or\
+				drive_2.axis0.encoder.vel_estimate != 0 or\
+				drive_2.axis1.encoder.vel_estimate != 0 or\
+				drive_3.axis0.encoder.vel_estimate != 0:		
 			time.sleep(0.1)
 		else:
 			# recusion
@@ -181,8 +195,10 @@ def move_to(index):
 	else:
 		print("LAST TARGET REACHED")
 
-# can only have one recording at a time.  This is gross as hell
 def clear_recording():
-	print("RECORDINGS CLEAR")
 	ax0_pos_array.clear()
 	ax1_pos_array.clear()
+	ax2_pos_array.clear()
+	ax3_pos_array.clear()
+	ax4_pos_array.clear()
+	print("RECORDINGS CLEAR")
