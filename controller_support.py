@@ -118,7 +118,7 @@ while done == False:
 							 mc.ax3_min_lim, 
 							 mc.ax3_max_lim, 
 							 mc.reduction_128,
-							 1.0, 
+							 0.5, 
 							 -axis_value)
 			
 			if axis == 2 and abs(axis_value) >= 0.15 and mc.arm_currently_moving == False:

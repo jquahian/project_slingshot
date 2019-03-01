@@ -16,10 +16,10 @@ import cv2
 import math
 import main_control as mc
 
-video_width = 600
+video_width = 1000
 
 head_vertical_threshold = 25
-
+head_horizontal_threshold = 15
 head_rotation_threshold = 15
 
 # construct the argument parse and parse the arguments
@@ -113,13 +113,14 @@ while True:
 		cv2.circle(frame, (face_mid_x, face_mid_y), 1, (0, 255, 255), -1)
 
 		face_vert_displacement = frame_mid_y - face_mid_y
+		face_hor_displacement = frame_mid_x - face_mid_x
 
 		# move the arm to match the vertical displacement of the face
 		if abs(face_vert_displacement) > head_vertical_threshold:
 			if face_vert_displacement > 0:
-				speed_direction = 0.75
+				speed_direction = 0.85
 			else:
-				speed_direction = -0.75
+				speed_direction = -0.85
 			mc.move_axis(3, 
 						 mc.ax3_min_lim, 
 						 mc.ax3_max_lim,
@@ -127,12 +128,25 @@ while True:
 						 1,
 						 speed_direction)
 
+		# move the arm to match the horizontal displacement of the face
+		if abs(face_hor_displacement) > head_horizontal_threshold:
+			if face_hor_displacement > 0:
+				speed_direction = -0.75
+			else:
+				speed_direction = 0.75
+			mc.move_axis(0, 
+						 mc.ax0_min_lim, 
+						 mc.ax0_max_lim,
+						 mc.reduction_64,
+						 1,
+						 speed_direction)
+
 		# move the arm to match the rotational displacement of the face
 		if abs(eye_theta) >= head_rotation_threshold:
 			if eye_theta > 0:
-				speed_direction = 7
+				speed_direction = 10
 			else:
-				speed_direction = -7
+				speed_direction = -10
 			mc.move_axis(4,
 						 mc.ax4_min_lim, 
 						 mc.ax4_max_lim,

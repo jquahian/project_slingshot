@@ -24,7 +24,7 @@ ax4_gearing = 4
 ax0_min_lim = -dc.return_counts(90, ax0_gearing)
 ax1_min_lim = -dc.return_counts(10, ax1_gearing)
 ax2_min_lim = -dc.return_counts(40, ax2_gearing)
-ax3_min_lim = -dc.return_counts(0, ax3_gearing)
+ax3_min_lim = -dc.return_counts(35, ax3_gearing)
 ax4_min_lim = -dc.return_counts(90, ax4_gearing)
 
 # soft maximums
@@ -162,9 +162,9 @@ def record_movement():
 	# then iterate through each array using a for loop to position each joint
 	ax0_pos_array.append(drive_1.axis0.controller.pos_setpoint)
 	ax1_pos_array.append(drive_1.axis1.controller.pos_setpoint)
-	ax2_pos_array.append(drive_1.axis0.controller.pos_setpoint)
-	ax3_pos_array.append(drive_1.axis0.controller.pos_setpoint)
-	ax4_pos_array.append(drive_1.axis0.controller.pos_setpoint)
+	ax2_pos_array.append(drive_2.axis0.controller.pos_setpoint)
+	ax3_pos_array.append(drive_2.axis1.controller.pos_setpoint)
+	ax4_pos_array.append(drive_3.axis0.controller.pos_setpoint)
 	
 	print("POSITION SAVED")
 
