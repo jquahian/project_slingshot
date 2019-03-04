@@ -47,6 +47,7 @@ textPrint = TextPrint()
 
 a_btn_down = False
 b_btn_down = False
+x_btn_down = False
 start_btn_down = False
 
 while done == False:
@@ -158,6 +159,13 @@ while done == False:
 				# this is a fucking stupid way to do this
 				if len(mc.ax0_pos_array) != 0: 
 					mc.clear_recording()
+
+			# X button
+			if button ==3 and btn_value == 1 and b_btn_down == False:
+				# trigger a flag to loop through the list of saved positions again
+				x_btn_down = True
+			elif button == 3 and btn_value == 0 and a_btn_down == True:
+				x_btn_down = False
 
 			textPrint.print(screen, "Btn {} value: {}".format(button, btn_value))
 
