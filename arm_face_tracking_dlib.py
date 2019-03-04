@@ -19,7 +19,7 @@ import main_control as mc
 video_width = 1000
 
 head_vertical_threshold = 25
-head_horizontal_threshold = 15
+head_horizontal_threshold = 25
 head_rotation_threshold = 15
 
 # construct the argument parse and parse the arguments
@@ -131,9 +131,9 @@ while True:
 		# move the arm to match the horizontal displacement of the face
 		if abs(face_hor_displacement) > head_horizontal_threshold:
 			if face_hor_displacement > 0:
-				speed_direction = -0.75
+				speed_direction = -0.9
 			else:
-				speed_direction = 0.75
+				speed_direction = 0.9
 			mc.move_axis(0, 
 						 mc.ax0_min_lim, 
 						 mc.ax0_max_lim,

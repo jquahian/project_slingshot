@@ -22,16 +22,16 @@ ax4_gearing = 4
 
 # soft minimums
 ax0_min_lim = -dc.return_counts(90, ax0_gearing)
-ax1_min_lim = -dc.return_counts(10, ax1_gearing)
+ax1_min_lim = -dc.return_counts(0, ax1_gearing)
 ax2_min_lim = -dc.return_counts(40, ax2_gearing)
-ax3_min_lim = -dc.return_counts(35, ax3_gearing)
+ax3_min_lim = -dc.return_counts(60, ax3_gearing)
 ax4_min_lim = -dc.return_counts(90, ax4_gearing)
 
 # soft maximums
 ax0_max_lim = dc.return_counts(90, ax0_gearing)
 ax1_max_lim = dc.return_counts(25, ax1_gearing)
 ax2_max_lim = dc.return_counts(180, ax2_gearing)
-ax3_max_lim = dc.return_counts(115, ax3_gearing)
+ax3_max_lim = dc.return_counts(90, ax3_gearing)
 ax4_max_lim = dc.return_counts(90, ax4_gearing)
 
 # centered position
